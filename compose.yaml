@@ -1,0 +1,40 @@
+secrets:
+  db_password:
+    file: .secrets/db-password
+volumes:
+  pg_data: {}
+
+services:
+  db:
+    image: postgres:16-alpine
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-d", "postgres", "-U", "postgres" ]
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    volumes:
+      - ./.data/db:/var/lib/postgresql/data:rw
+      - ./db/create_odoo_user.sql:/docker-entrypoint-initdb.d/create_odoo_user.sql
+    #      - pg_data:/var/lib/postgresql/data:rw
+    secrets:
+      - db_password
+    ports:
+      - 5432:5432
+
+  odoo:
+    depends_on:
+      - db
+    image: odoo:17.0
+    environment:
+      USER: odoo
+      HOST: db
+      PASSWORD: Quohpe1aecha
+    volumes:
+      - ./.data/odoo:/var/lib/odoo:rw
+      - ./.data/odoo-addons:/mnt/extra-addons:rw
+    ports:
+      - 8069:8069

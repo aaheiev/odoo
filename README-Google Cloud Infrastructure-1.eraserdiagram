@@ -1,0 +1,20 @@
+cloud-architecture-diagram
+
+title Google Cloud Infrastructure
+
+// Define groups and nodes
+Managed DNS Zone [icon: gcp-dns]
+Managed TLS Certificate [icon: gcp-certificates]
+
+Private VPC [icon: gcp-vpc] {
+  Cloud Run Instance [icon: gcp-cloud-run]
+  Persistent Storage [icon: gcp-persistent-disk]
+  Cloud SQL Postgres [icon: gcp-sql]
+}
+
+// Define connections
+Managed DNS Zone > Managed TLS Certificate
+Managed TLS Certificate > Cloud Run Instance
+Cloud Run Instance > Persistent Storage
+Cloud Run Instance > Cloud SQL Postgres
+
